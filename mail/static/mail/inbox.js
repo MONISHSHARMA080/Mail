@@ -26,7 +26,59 @@ function compose_email() {
 }
 
 function load_mailbox(mailbox) {
-  
+
+  fetch(`/emails/${mailbox}`)
+  .then(response => response.json())
+  .then(mails => {
+    // api and ou implemenatation works(for test console log)
+                                                                console.log(mails)
+    mails.forEach( mail => {
+      // works till here
+                                                                console.log(mail)
+    div = document.querySelector('#mail');
+    outline = document.createElement('ul');
+    outline.className = 'list-group';
+    body = document.createElement('ul');
+    body.className = 'list-group-item';
+    body.innerHTML = mail.body;
+    recipients = document.createElement('li');
+    recipients.className = 'list-group-item';
+   // recipients.forEach(recipient=>{
+
+//})
+ r = "reciever:";
+    recipients.innerHTML = r.concat(mail.recipients);
+    // works !! 
+    //var x = mail.body;
+     //.log(x)
+
+     subject = document.createElement('li');
+     subject.innerHTML = ' <p> Subject:  ${mail.subject} </p> '
+
+
+
+     hr = document.createElement('hr');
+
+     div.appendChild(outline);
+     outline.appendChild(subject);
+     outline.appendChild(body);
+     outline.appendChild(recipients);   
+     console.log(recipients);
+     console.log(recipients[1]);
+     outline.appendChild(hr);
+    
+
+    });
+
+  });
+
+
+
+
+
+
+
+
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
@@ -37,25 +89,31 @@ function load_mailbox(mailbox) {
 // span comment
 
 function compose_submit() {
-    const compose_recipients = document.querySelector('#compose-recipients').value;
-    const compose_subject = document.querySelector('#compose-subject').value;
-    const compose_body = document.querySelector('#compose-body').value;
+// Clear existing emails from the view
+document.querySelector('#emails-view').innerHTML = '';
+
+//var to strore 
+
+    const to = document.querySelector('#compose-recipients').value;
+    const subject = document.querySelector('#compose-subject').value;
+    const    body = document.querySelector('#compose-body').value;
+
+// sendin email to server
 
     fetch('/emails', {
         method: 'POST',
         body: JSON.stringify({
-            recipients: compose_recipients,
-            subject: compose_subject,
-            body: compose_body
-
+            recipients: to,
+            subject: subject,
+            body: body
             //conole.log(body)
-
         })
     })
     .then(response => response.json())
     .then( () => {
-            load_mailbox('sent');
+      document.querySelector('#compose-recipients').value = '';
+      document.querySelector('#compose-subject').value = '';
+      document.querySelector('#compose-body').value = ''; 
         });
     // load_mailbox('sent');
-    
 }
