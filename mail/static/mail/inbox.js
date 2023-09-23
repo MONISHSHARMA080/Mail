@@ -102,9 +102,14 @@ if (mail.read === false)
 
 
 
-
+    
      div.appendChild(outline);
      outline.appendChild(item);
+     outline.addEventListener('click', function(){alert('you clicked here');
+    });
+
+   
+
     });
 
   });
