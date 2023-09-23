@@ -139,7 +139,7 @@ if (mail.read === false)
       .then(response => response.json())
       .then(mail => {
           // Print email
-          console.log("inside the api and fetched")// -> passes it works
+         // console.log("inside the api and fetched")// -> passes it works
            //1>inside div create elem. ul , 2>
           div = document.querySelector('#individual');
           outline = document.createElement('ul');
@@ -162,6 +162,17 @@ if (mail.read === false)
          
         }); 
    //on pop  
+
+   // marking email as read when opened
+   fetch(`/emails/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        read: true
+    })
+  })
+
+  console.log("after read: true");
+
  }
 
 
