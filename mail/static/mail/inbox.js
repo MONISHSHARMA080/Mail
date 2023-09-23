@@ -31,7 +31,7 @@ function load_mailbox(mailbox) {
    document.querySelector('#emails-view').style.display = 'block';
    document.querySelector('#compose-view').style.display = 'none';
    document.querySelector('#individual').style.display = 'none';
- 
+   
    // Show the mailbox name
    document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
  
@@ -40,6 +40,11 @@ function load_mailbox(mailbox) {
  const Div = document.querySelector('#mail');
   Div.innerHTML = '';
 
+   // Check if the current view is 'individual' and hide it
+//   if (document.querySelector('#individual').style.display === 'block')
+ //{
+   // document.querySelector('#individual').style.display = 'none';
+ //}
 
   fetch(`/emails/${mailbox}`)
   .then(response => response.json())
@@ -118,6 +123,10 @@ if (mail.read === false)
 
  function view_mail(id)
  {
+  //1st clearing an previous values
+  document.querySelector('#individual').innerHTML = ``;
+
+
    outline.addEventListener('click',mail);
    // Show the #mail and hide other views
    document.querySelector('#emails-view').style.display = 'none';
@@ -141,34 +150,17 @@ if (mail.read === false)
           outline.style.border = '5px solid rgba(255, 255, 0, 0.5)';
           //---styling end----
           div.innerHTML = ` <h1 style=" padding: 18px; margin: 20px; ">Mail:</h1>`
-
-
-
-
-
-
-
-
-
-
-
-
-
-     
+ 
+          
          outline.innerHTML=  `<li class="list-group-item"> <strong>from:</strong> ${mail.sender} </li><br>
           <li class="list-group-item" > <strong>to:</strong> ${mail.recipients} </li><br>
           <li class="list-group-item" > <strong>Subject:</strong> ${mail.subject} </li><br>
           <li class="list-group-item" > <strong>Body:</strong> ${mail.body} </li><br>
           <li class="list-group-item" > <strong>Timestamp:</strong> ${mail.timestamp}</li><hr><hr>`;
      
-          div.appendChild(outline);
-     
-     
-     
-     
-        });
-
- 
+          div.appendChild(outline);   
+         
+        }); 
    //on pop  
  }
 
