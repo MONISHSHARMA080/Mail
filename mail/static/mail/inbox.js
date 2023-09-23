@@ -27,6 +27,19 @@ function compose_email() {
 
 function load_mailbox(mailbox) {
 
+   // Show the mailbox and hide other views
+   document.querySelector('#emails-view').style.display = 'block';
+   document.querySelector('#compose-view').style.display = 'none';
+ 
+   // Show the mailbox name
+   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+ 
+ 
+  // Clear the content of the "mail" div
+ const Div = document.querySelector('#mail');
+  Div.innerHTML = '';
+
+
   fetch(`/emails/${mailbox}`)
   .then(response => response.json())
   .then(mails => {
@@ -46,25 +59,26 @@ function load_mailbox(mailbox) {
         item.className = 'list-group-item ';
 
 // if unread appearing with white else with gray
-if (mail.read === "false")
+if (mail.read === false) 
 {
-   item.style = 'bacground:white';
-}
-else
-{
-  item.style = 'bacground:gray';
+  // Unread mail
+  item.style.backgroundColor = 'red';
+} else
+ {
+  // Mail is read
+  item.style.backgroundColor = 'blue';
 }
         
-        if (mailbox === "archive") 
+        if (mailbox === "archived") 
         {
           //if this is the archived mail then show on website 
           if (mail.archived === 'true')
           {// Set the content of the list item (e.g., sender, subject, timestamp)
-            item.innerHTML = `
+            item.innerHTML = `<h3>Archived mail</h3>
             <div class="list-group-item"> <strong>from:</strong> ${mail.sender}<br> </div>
+            <div class="list-group-item" > <strong>to:</strong> ${mail.recipients}<br> </div>
             <div class="list-group-item" > <strong>Subject:</strong> ${mail.subject}<br> </div>
             <div class="list-group-item" > <strong>Body:</strong> ${mail.body}<br> </div>
-            <div class="list-group-item" > <strong>to:</strong> ${mail.recipients}<br> </div>
             <div class="list-group-item" > <strong>Timestamp:</strong> ${mail.timestamp}<hr><hr> </div>
             `;
           }
@@ -79,9 +93,9 @@ else
           // Set the content of the list item (e.g., sender, subject, timestamp)
           item.innerHTML = `
           <div class="list-group-item"> <strong>from:</strong> ${mail.sender}<br> </div>
+          <div class="list-group-item" > <strong>to:</strong> ${mail.recipients}<br> </div>
           <div class="list-group-item" > <strong>Subject:</strong> ${mail.subject}<br> </div>
           <div class="list-group-item" > <strong>Body:</strong> ${mail.body}<br> </div>
-          <div class="list-group-item" > <strong>to:</strong> ${mail.recipients}<br> </div>
           <div class="list-group-item" > <strong>Timestamp:</strong> ${mail.timestamp}<hr><hr> </div>
           `;
         }
@@ -95,21 +109,8 @@ else
 
   });
 
+ }
 
-
-
-
-
-
-
-  // Show the mailbox and hide other views
-  document.querySelector('#emails-view').style.display = 'block';
-  document.querySelector('#compose-view').style.display = 'none';
-
-  // Show the mailbox name
-  document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
-}
-// span comment
 
 function compose_submit() {
 // Clear existing emails from the view
