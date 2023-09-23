@@ -1,3 +1,8 @@
+// git push origin main
+// git commit -am ""
+// python manage.py runserver
+
+
 document.addEventListener('DOMContentLoaded', function() {
 
   // Use buttons to toggle between views
@@ -6,6 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
 document.querySelector('#compose-form').addEventListener('submit', compose_submit);
+ // Select all elements with both "btn" and "btn-success" classes and add click event listener
+ 
+
   // By default, load the inbox
   load_mailbox('inbox');
 
@@ -78,7 +86,7 @@ if (mail.read === false)
         if (mailbox === "archived") 
         {
           //if this is the archived mail then show on website 
-          if (mail.archived === 'true')
+          if (mail.archived === true)
           {// Set the content of the list item (e.g., sender, subject, timestamp)
             item.innerHTML = `<h3>Archived mail</h3>
             <div class="list-group-item"> <strong>from:</strong> ${mail.sender}<br> </div>
@@ -95,6 +103,28 @@ if (mail.read === false)
         }
         else
         {
+          //adding archive/unarchive button ->by creating a button then adding event listener throuh code 
+          //and a function to use the api
+          var foo = document.createElement('button') 
+          foo.className = 'btn btn-success ';
+          foo.innerHTML = `archive`;
+          foo.id = 'foo';
+          //access foo dataset for api
+          if (mail.archived === false)
+          {
+            //do something            
+            foo.setAttribute('data-foo', 'archived');
+          }
+          else
+          {
+            //mail.archived === true
+            foo.setAttribute('data-foo', 'unarchived');
+          }
+          //--------------archive/unarchive button------------
+          
+          
+          
+          
           //we are not ot archived
           // Set the content of the list item (e.g., sender, subject, timestamp)
           item.innerHTML = `
@@ -105,14 +135,20 @@ if (mail.read === false)
           <div class="list-group-item" > <strong>Timestamp:</strong> ${mail.timestamp}<hr><hr> </div>
           `;
         }
-
-
-
     
      div.appendChild(outline);
      outline.appendChild(item);
      outline.addEventListener('click', function(){view_mail(mail.id); });
-
+     outline.appendChild(foo);
+     foo.addEventListener('click', function (event) {
+      event.stopPropagation(); // Prevent the click event from propagating to the parent outline element
+      console.log("Yay for archive button");
+   });
+    
+    
+    
+    
+     
    
 
     });
@@ -214,3 +250,4 @@ document.querySelector('#emails-view').innerHTML = '';
         });
     // load_mailbox('sent');
 }
+
