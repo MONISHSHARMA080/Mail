@@ -32,42 +32,65 @@ function load_mailbox(mailbox) {
   .then(mails => {
     // api and ou implemenatation works(for test console log)
                                                                 console.log(mails)
+    div = document.querySelector('#mail');
+   
     mails.forEach( mail => {
       // works till here
-                                                                console.log(mail)
-    div = document.querySelector('#mail');
-    outline = document.createElement('ul');
-    outline.className = 'list-group';
-    body = document.createElement('ul');
-    body.className = 'list-group-item';
-    body.innerHTML = mail.body;
-    recipients = document.createElement('li');
-    recipients.className = 'list-group-item';
-   // recipients.forEach(recipient=>{
+      
+      console.log(mail)
+ outline = document.createElement('ul');
+ outline.className = 'list-group';
+ outline.style = 'margin: 38px; border: 5px solid green; border-radius: 18px; '
 
-//})
- r = "reciever:";
-    recipients.innerHTML = r.concat(mail.recipients);
-    // works !! 
-    //var x = mail.body;
-     //.log(x)
+ const item = document.createElement('li');
+        item.className = 'list-group-item ';
 
-     subject = document.createElement('li');
-     subject.innerHTML = ' <p> Subject:  ${mail.subject} </p> '
+// if unread appearing with white else with gray
+if (mail.read === "false")
+{
+   item.style = 'bacground:white';
+}
+else
+{
+  item.style = 'bacground:gray';
+}
+        
+        if (mailbox === "archive") 
+        {
+          //if this is the archived mail then show on website 
+          if (mail.archived === 'true')
+          {// Set the content of the list item (e.g., sender, subject, timestamp)
+            item.innerHTML = `
+            <div class="list-group-item"> <strong>from:</strong> ${mail.sender}<br> </div>
+            <div class="list-group-item" > <strong>Subject:</strong> ${mail.subject}<br> </div>
+            <div class="list-group-item" > <strong>Body:</strong> ${mail.body}<br> </div>
+            <div class="list-group-item" > <strong>to:</strong> ${mail.recipients}<br> </div>
+            <div class="list-group-item" > <strong>Timestamp:</strong> ${mail.timestamp}<hr><hr> </div>
+            `;
+          }
+          else
+          {
+            //no code will be executed here
+          }
+        }
+        else
+        {
+          //we are not o archived
+          // Set the content of the list item (e.g., sender, subject, timestamp)
+          item.innerHTML = `
+          <div class="list-group-item"> <strong>from:</strong> ${mail.sender}<br> </div>
+          <div class="list-group-item" > <strong>Subject:</strong> ${mail.subject}<br> </div>
+          <div class="list-group-item" > <strong>Body:</strong> ${mail.body}<br> </div>
+          <div class="list-group-item" > <strong>to:</strong> ${mail.recipients}<br> </div>
+          <div class="list-group-item" > <strong>Timestamp:</strong> ${mail.timestamp}<hr><hr> </div>
+          `;
+        }
 
 
 
-     hr = document.createElement('hr');
 
      div.appendChild(outline);
-     outline.appendChild(subject);
-     outline.appendChild(body);
-     outline.appendChild(recipients);   
-     console.log(recipients);
-     console.log(recipients[1]);
-     outline.appendChild(hr);
-    
-
+     outline.appendChild(item);
     });
 
   });
