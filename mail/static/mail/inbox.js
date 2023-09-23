@@ -30,6 +30,7 @@ function load_mailbox(mailbox) {
    // Show the mailbox and hide other views
    document.querySelector('#emails-view').style.display = 'block';
    document.querySelector('#compose-view').style.display = 'none';
+   document.querySelector('#individual').style.display = 'none';
  
    // Show the mailbox name
    document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
@@ -44,13 +45,13 @@ function load_mailbox(mailbox) {
   .then(response => response.json())
   .then(mails => {
     // api and ou implemenatation works(for test console log)
-                                                                console.log(mails)
+    //                                                            console.log(mails)
     div = document.querySelector('#mail');
    
     mails.forEach( mail => {
       // works till here
       
-      console.log(mail)
+    //  console.log(mail)
  outline = document.createElement('ul');
  outline.className = 'list-group';
  outline.style = 'margin: 38px; border: 5px solid green; border-radius: 18px; '
@@ -89,7 +90,7 @@ if (mail.read === false)
         }
         else
         {
-          //we are not o archived
+          //we are not ot archived
           // Set the content of the list item (e.g., sender, subject, timestamp)
           item.innerHTML = `
           <div class="list-group-item"> <strong>from:</strong> ${mail.sender}<br> </div>
@@ -105,8 +106,7 @@ if (mail.read === false)
     
      div.appendChild(outline);
      outline.appendChild(item);
-     outline.addEventListener('click', function(){alert('you clicked here');
-    });
+     outline.addEventListener('click', function(){view_mail(mail.id); });
 
    
 
@@ -115,6 +115,71 @@ if (mail.read === false)
   });
 
  }
+
+ function view_mail(id)
+ {
+   outline.addEventListener('click',mail);
+   // Show the #mail and hide other views
+   document.querySelector('#emails-view').style.display = 'none';
+   document.querySelector('#compose-view').style.display = 'none';
+   document.querySelector('#mail').style.display = 'none';
+            //target div for showing
+   document.querySelector('#individual').style.display = 'block';
+    
+     fetch(`/emails/${id}`)
+      .then(response => response.json())
+      .then(mail => {
+          // Print email
+          console.log("inside the api and fetched")// -> passes it works
+           //1>inside div create elem. ul , 2>
+          div = document.querySelector('#individual');
+          outline = document.createElement('ul');
+          outline.className = 'list-group';
+          //Settin style for outline through js 
+          outline.style.padding = '28px';
+          outline.style.borderRadius = '18px';
+          outline.style.border = '5px solid rgba(255, 255, 0, 0.5)';
+          //---styling end----
+          div.innerHTML = ` <h1 style=" padding: 18px; margin: 20px; ">Mail:</h1>`
+
+
+
+
+
+
+
+
+
+
+
+
+
+     
+         outline.innerHTML=  `<li class="list-group-item"> <strong>from:</strong> ${mail.sender} </li><br>
+          <li class="list-group-item" > <strong>to:</strong> ${mail.recipients} </li><br>
+          <li class="list-group-item" > <strong>Subject:</strong> ${mail.subject} </li><br>
+          <li class="list-group-item" > <strong>Body:</strong> ${mail.body} </li><br>
+          <li class="list-group-item" > <strong>Timestamp:</strong> ${mail.timestamp}</li><hr><hr>`;
+     
+          div.appendChild(outline);
+     
+     
+     
+     
+        });
+
+ 
+   //on pop  
+ }
+
+
+
+
+
+
+
+
+
 
 
 function compose_submit() {
