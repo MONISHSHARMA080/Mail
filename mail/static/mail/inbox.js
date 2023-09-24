@@ -1,5 +1,5 @@
-// git push origin main
 // git commit -am ""
+// git push origin main
 // python manage.py runserver
 
 
@@ -85,21 +85,49 @@ if (mail.read === false)
         
         if (mailbox === "archived") 
         {
-          //if this is the archived mail then show on website 
-          if (mail.archived === true)
-          {// Set the content of the list item (e.g., sender, subject, timestamp)
-            item.innerHTML = `<h3>Archived mail</h3>
-            <div class="list-group-item"> <strong>from:</strong> ${mail.sender}<br> </div>
-            <div class="list-group-item" > <strong>to:</strong> ${mail.recipients}<br> </div>
-            <div class="list-group-item" > <strong>Subject:</strong> ${mail.subject}<br> </div>
-            <div class="list-group-item" > <strong>Body:</strong> ${mail.body}<br> </div>
-            <div class="list-group-item" > <strong>Timestamp:</strong> ${mail.timestamp}<hr><hr> </div>
-            `;
-          }
-          else
-          {
-            //no code will be executed here
-          }
+            //if this is the archived mail then show on website 
+            if (mail.archived === true)
+            {// Set the content of the list item (e.g., sender, subject, timestamp)
+              item.innerHTML = `
+              <div class="list-group-item"> <strong>from:</strong> ${mail.sender}<br> </div>
+              <div class="list-group-item" > <strong>to:</strong> ${mail.recipients}<br> </div>
+              <div class="list-group-item" > <strong>Subject:</strong> ${mail.subject}<br> </div>
+              <div class="list-group-item" > <strong>Body:</strong> ${mail.body}<br> </div>
+              <div class="list-group-item" > <strong>Timestamp:</strong> ${mail.timestamp}<hr><hr> </div>
+              `;
+              //adding the unarchive button 
+              var foo = document.createElement('button') 
+              foo.className = 'btn btn-success ';
+              foo.innerHTML = `unarchive`;
+              foo.id = 'foo'; 
+               foo.setAttribute('data-foo', 'archived');
+                              //defining function for making  
+                foo.addEventListener('click', function (event) {
+                  event.stopPropagation(); // Prevent the click event from propagating to the parent outline element
+                  console.log("Yay for unarchive button");//test done works
+                  //putting to the api
+                  fetch(`/emails/${mail.id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        archived: false
+                        })
+                      })
+                  });
+              if (mail.archived === true)
+              {
+
+              }
+              // i can remove this as i changed the logic
+              else
+              {
+                //mail.archived === true
+                foo.setAttribute('data-foo', 'unarchived');
+              }
+            }
+            else
+            {
+              //no code will be executed here
+            }
         }
         else
         {
@@ -112,19 +140,30 @@ if (mail.read === false)
           //access foo dataset for api
           if (mail.archived === false)
           {
-            //do something            
+            //            
             foo.setAttribute('data-foo', 'archived');
+                          //defining function for making  
+            foo.addEventListener('click', function (event) {
+              event.stopPropagation(); // Prevent the click event from propagating to the parent outline element
+              console.log("Yay for archive button");//test done works
+              //putting to the api
+              fetch(`/emails/${mail.id}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    archived: true
+                    })
+                  })
+              });
+
           }
+          // i can remove this as i changed the logic
           else
           {
             //mail.archived === true
             foo.setAttribute('data-foo', 'unarchived');
           }
           //--------------archive/unarchive button------------
-          
-          
-          
-          
+                    
           //we are not ot archived
           // Set the content of the list item (e.g., sender, subject, timestamp)
           item.innerHTML = `
@@ -140,17 +179,7 @@ if (mail.read === false)
      outline.appendChild(item);
      outline.addEventListener('click', function(){view_mail(mail.id); });
      outline.appendChild(foo);
-     foo.addEventListener('click', function (event) {
-      event.stopPropagation(); // Prevent the click event from propagating to the parent outline element
-      console.log("Yay for archive button");
-   });
     
-    
-    
-    
-     
-   
-
     });
 
   });
@@ -158,6 +187,7 @@ if (mail.read === false)
  }
 
  function view_mail(id)
+
  {
   //1st clearing an previous values
   document.querySelector('#individual').innerHTML = ``;
@@ -207,19 +237,9 @@ if (mail.read === false)
     })
   })
 
-  console.log("after read: true");
+  console.log("from ->marking email as read when opened");
 
  }
-
-
-
-
-
-
-
-
-
-
 
 function compose_submit() {
 // Clear existing emails from the view
@@ -250,4 +270,3 @@ document.querySelector('#emails-view').innerHTML = '';
         });
     // load_mailbox('sent');
 }
-
