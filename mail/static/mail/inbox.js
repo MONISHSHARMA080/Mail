@@ -38,7 +38,7 @@ function load_mailbox(mailbox) {
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#individual').style.display = 'none';
-
+  document.querySelector('#emails-view').innerHTML = ``;
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
@@ -55,6 +55,10 @@ function load_mailbox(mailbox) {
 
       mails.forEach(mail => {
         const listItem = document.createElement('li');
+        //adding dispaly on clic show it complety
+        listItem.addEventListener('click', function () {
+          view_mail(mail.id);
+        });
         listItem.className = 'list-group-item';
 
         // Handle read/unread status
@@ -104,20 +108,20 @@ console.log(newArchiveStatus);
         listItem.appendChild(archiveButton);
 
         emailList.appendChild(listItem);
+
       });
 
       div.appendChild(emailList);
     });
 }
 
- function view_mail(id)
+function view_mail(id)
 
  {
   //1st clearing an previous values
   document.querySelector('#individual').innerHTML = ``;
 
 
-   outline.addEventListener('click',mail);
    // Show the #mail and hide other views
    document.querySelector('#emails-view').style.display = 'none';
    document.querySelector('#compose-view').style.display = 'none';
@@ -132,23 +136,23 @@ console.log(newArchiveStatus);
          // console.log("inside the api and fetched")// -> passes it works
            //1>inside div create elem. ul , 2>
           div = document.querySelector('#individual');
-          outline = document.createElement('ul');
-          outline.className = 'list-group';
+          outlinef = document.createElement('ul');
+          outlinef.className = 'list-group';
           //Settin style for outline through js 
-          outline.style.padding = '28px';
-          outline.style.borderRadius = '18px';
-          outline.style.border = '5px solid rgba(255, 255, 0, 0.5)';
+          outlinef.style.padding = '28px';
+          outlinef.style.borderRadius = '18px';
+          outlinef.style.border = '5px solid rgba(255, 255, 0, 0.5)';
           //---styling end----
           div.innerHTML = ` <h1 style=" padding: 18px; margin: 20px; ">Mail:</h1>`
  
           
-         outline.innerHTML=  `<li class="list-group-item"> <strong>from:</strong> ${mail.sender} </li><br>
+         outlinef.innerHTML=  `<li class="list-group-item"> <strong>from:</strong> ${mail.sender} </li><br>
           <li class="list-group-item" > <strong>to:</strong> ${mail.recipients} </li><br>
           <li class="list-group-item" > <strong>Subject:</strong> ${mail.subject} </li><br>
           <li class="list-group-item" > <strong>Body:</strong> ${mail.body} </li><br>
           <li class="list-group-item" > <strong>Timestamp:</strong> ${mail.timestamp}</li><hr><hr>`;
      
-          div.appendChild(outline);   
+          div.appendChild(outlinef);   
          
         }); 
    //on pop  
@@ -164,6 +168,7 @@ console.log(newArchiveStatus);
   console.log("from ->marking email as read when opened");
 
  }
+
 
 function compose_submit() {
 // Clear existing emails from the view
