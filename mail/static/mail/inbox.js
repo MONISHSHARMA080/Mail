@@ -34,148 +34,81 @@ function compose_email() {
 }
 
 function load_mailbox(mailbox) {
+  // Show the mailbox and hide other views
+  document.querySelector('#emails-view').style.display = 'block';
+  document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#individual').style.display = 'none';
 
-   // Show the mailbox and hide other views
-   document.querySelector('#emails-view').style.display = 'block';
-   document.querySelector('#compose-view').style.display = 'none';
-   document.querySelector('#individual').style.display = 'none';
-   
-   // Show the mailbox name
-   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
- 
- 
+  // Show the mailbox name
+  document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
   // Clear the content of the "mail" div
- const Div = document.querySelector('#mail');
-  Div.innerHTML = '';
-
-   // Check if the current view is 'individual' and hide it
-//   if (document.querySelector('#individual').style.display === 'block')
- //{
-   // document.querySelector('#individual').style.display = 'none';
- //}
+  const div = document.querySelector('#mail');
+  div.innerHTML = '';
 
   fetch(`/emails/${mailbox}`)
-  .then(response => response.json())
-  .then(mails => {
-    // api and ou implemenatation works(for test console log)
-    //                                                            console.log(mails)
-    div = document.querySelector('#mail');
-   
-    mails.forEach( mail => {
-      // works till here
-      
-    //  console.log(mail)
- outline = document.createElement('ul');
- outline.className = 'list-group';
- outline.style = 'margin: 38px; border: 5px solid green; border-radius: 18px; '
+    .then(response => response.json())
+    .then(mails => {
+      const emailList = document.createElement('ul');
+      emailList.className = 'list-group';
+      emailList.style = 'margin: 38px; border: 5px solid green; border-radius: 18px; ';
 
- const item = document.createElement('li');
-        item.className = 'list-group-item ';
+      mails.forEach(mail => {
+        const listItem = document.createElement('li');
+        listItem.className = 'list-group-item';
 
-// if unread appearing with white else with gray
-if (mail.read === false) 
-{
-  // Unread mail
-  item.style.backgroundColor = 'red';
-} else
- {
-  // Mail is read
-  item.style.backgroundColor = 'blue';
-}
-        
-        if (mailbox === "archived") 
-        {
-            //if this is the archived mail then show on website 
-            if (mail.archived === true)
-            {// Set the content of the list item (e.g., sender, subject, timestamp)
+        // Handle read/unread status
+        if (!mail.read) {
+          listItem.style.backgroundColor = 'red'; // Unread mail
+        } else {
+          listItem.style.backgroundColor = 'blue'; // Read mail
+        }
 
-// very intresting because we are not here as my archived inbox is not showing this timestampppp
+        const archiveButton = document.createElement('button');
+        archiveButton.className = 'btn btn-success';
+        archiveButton.innerHTML = mailbox === 'archive' ? 'Unarchive' : 'Archive';
 
-              item.innerHTML = `
-              <div class="list-group-item"> <strong>from:</strong> ${mail.sender}<br> </div>
-              <div class="list-group-item" > <strong>to:</strong> ${mail.recipients}<br> </div>
-              <div class="list-group-item" > <strong>Subject:</strong> ${mail.subject}<br> </div>
-              <div class="list-group-item" > <strong>Body:</strong> ${mail.body}<br> </div>
-              <div class="list-group-item" > <strong>Timestampppp:</strong> ${mail.timestamp}<hr><hr> </div>
-              `;
-              //adding the unarchive button 
-              var foo = document.createElement('button') 
-              foo.className = 'btn btn-success ';
-              foo.innerHTML = `unarchive`;
-              foo.id = 'foo'; 
-               foo.setAttribute('data-foo', 'archived');
-                              //defining function for making  
-                foo.addEventListener('click', function (event) {
-                  event.stopPropagation(); // Prevent the click event from propagating to the parent outline element
-                  console.log(" from unarchive button");//test done works
-                  //putting to the api
-                  fetch(`/emails/${mail.id}`, {
-                    method: 'PUT',
-                    body: JSON.stringify({
-                        archived: false
-                        })
-                      })
-                  });
-
+        // Add click event listener to archive/unarchive button
+        archiveButton.addEventListener('click', function (event) {
+          event.stopPropagation();
+          console.log("from archive button");
+          const newArchiveStatus = mailbox === 'archive' ? false : true;
+console.log(newArchiveStatus);
+          // Update the archived status using the API
+          fetch(`/emails/${mail.id}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+              archived: newArchiveStatus
+            })
+          }).then(response => {
+            // Handle the response accordingly (e.g., reload the mailbox)
+            if (response.status === 204) {
+              load_mailbox(mailbox); // Reload the mailbox after the action
+            } else {
+              // Handle errors if needed
+              console.error('Failed to update archive status');
             }
+          });
+        });
         
-        }
-        else
-        {
-          //adding archive/unarchive button ->by creating a button then adding event listener throuh code 
-          //and a function to use the api
-          var foo = document.createElement('button') 
-          foo.className = 'btn btn-success ';
-          foo.innerHTML = `archive`;
-          foo.id = 'foo';
-          //access foo dataset for api
-          if (mail.archived === false)
-          {
-            //            
-            foo.setAttribute('data-foo', 'archived');
-                          //defining function for making  
-            foo.addEventListener('click', function (event) {
-              event.stopPropagation(); // Prevent the click event from propagating to the parent outline element
-              console.log("Yay for archive button");//test done works
-              //putting to the api
-              fetch(`/emails/${mail.id}`, {
-                method: 'PUT',
-                body: JSON.stringify({
-                    archived: true
-                    })
-                  })
-              });
 
-          }
-          // i can remove this as i changed the logic
-          else
-          {
-            //mail.archived === true
-            foo.setAttribute('data-foo', 'unarchived');
-          }
-          //--------------archive/unarchive button------------
-                    
-          //we are not ot archived
-          // Set the content of the list item (e.g., sender, subject, timestamp)
-          item.innerHTML = `
-          <div class="list-group-item"> <strong>from:</strong> ${mail.sender}<br> </div>
-          <div class="list-group-item" > <strong>to:</strong> ${mail.recipients}<br> </div>
-          <div class="list-group-item" > <strong>Subject:</strong> ${mail.subject}<br> </div>
-          <div class="list-group-item" > <strong>Body:</strong> ${mail.body}<br> </div>
-          <div class="list-group-item" > <strong>Timestamp:</strong> ${mail.timestamp}<hr><hr> </div>
-          `;
-        }
-    
-     div.appendChild(outline);
-     outline.appendChild(item);
-     outline.addEventListener('click', function(){view_mail(mail.id); });
-     outline.appendChild(foo);
-    
+        listItem.innerHTML = `
+          <div class="list-group-item"><strong>From:</strong> ${mail.sender}<br></div>
+          <div class="list-group-item"><strong>To:</strong> ${mail.recipients}<br></div>
+          <div class="list-group-item"><strong>Subject:</strong> ${mail.subject}<br></div>
+          <div class="list-group-item"><strong>Body:</strong> ${mail.body}<br></div>
+          <div class="list-group-item"><strong>Timestamp:</strong> ${mail.timestamp}<hr><hr></div>
+        `;
+
+        // Append archive/unarchive button to the list item
+        listItem.appendChild(archiveButton);
+
+        emailList.appendChild(listItem);
+      });
+
+      div.appendChild(emailList);
     });
-
-  });
-
- }
+}
 
  function view_mail(id)
 
