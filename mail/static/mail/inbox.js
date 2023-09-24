@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-  document.querySelector('#compose').addEventListener('click', compose_email);
+  document.querySelector('#mailbox-inbox').addEventListener('click', compose_email);
   document.querySelector('#compose-form').addEventListener('submit', compose_submit);
 
   // By default, load the inbox
@@ -24,6 +24,9 @@ function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#individual').style.display = 'none';
+  document.querySelector('#mail').style.display = 'none';
+
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
@@ -61,7 +64,7 @@ function load_mailbox(mailbox) {
 
         // Handle read/unread status
         if (!mail.read) {
-          listItem.style.backgroundColor = 'red'; // Unread mail
+          listItem.style.backgroundColor = 'yellow'; // Unread mail
         } else {
           listItem.style.backgroundColor = 'blue'; // Read mail
         }
@@ -181,7 +184,7 @@ function view_mail(id)
 
 function compose_submit() {
 // Clear existing emails from the view
-document.querySelector('#emails-view').innerHTML = '';
+document.querySelector('#emails-view').style.display = 'none';
 
 //var to strore 
 
@@ -190,7 +193,8 @@ document.querySelector('#emails-view').innerHTML = '';
     const    body = document.querySelector('#compose-body').value;
 
 // sendin email to server
-
+load_mailbox('sent');
+document.querySelector('#individual').innerHTML=``;
     fetch('/emails', {
         method: 'POST',
         body: JSON.stringify({
@@ -202,7 +206,7 @@ document.querySelector('#emails-view').innerHTML = '';
             //conole.log(body)
         })
     })
-    load_mailbox('sent');
+    
 }
 
 function reply_mail(mail)
@@ -214,7 +218,7 @@ function reply_mail(mail)
   //this means if subject(by api)'s 3 chars is ... then just print mail.sub.. if not then ...
   if (mail.subject.startsWith("Re: "))
   {
-    document.querySelector('#compose-body').value = "On " + mail.timestamp + " " + mail["sender"] + " wrote";
+    document.querySelector('#compose-body').value = "On " + mail.timestamp + " " + mail["sender"] + " wrote"  + mail["subject"];
   } else
   {
     document.querySelector('#compose-body').value = "Re: " + mail["subject"];
