@@ -52,9 +52,17 @@ function load_mailbox(mailbox) {
     .then(mails => {
       const emailList = document.createElement('ul');
       emailList.className = 'list-group';
-      emailList.style = 'margin: 38px; border: 5px solid green; border-radius: 18px; ';
+      emailList.style = 'margin: 38px; border: 5px solid green; border-radius: 18px;  ';
 
       mails.forEach(mail => {
+        //if no mails
+        if (mail.length===0){
+          document.querySelector('#new').style.display = 'block';
+        }
+        else{
+// first lets set the new div to none just in case
+document.querySelector('#new').style.display = 'none';
+        
         const listItem = document.createElement('li');
         //adding dispaly on clic show it complety
         listItem.addEventListener('click', function () {
@@ -109,7 +117,7 @@ console.log(newArchiveStatus);
         listItem.appendChild(archiveButton);
 
         emailList.appendChild(listItem);
-
+      }
       });
 
       div.appendChild(emailList);
