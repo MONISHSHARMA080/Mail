@@ -11,8 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
 document.querySelector('#compose-form').addEventListener('submit', compose_submit);
- // Select all elements with both "btn" and "btn-success" classes and add click event listener
- 
 
   // By default, load the inbox
   load_mailbox('inbox');
@@ -144,8 +142,6 @@ function view_mail(id)
           outlinef.style.border = '5px solid rgba(255, 255, 0, 0.5)';
           //---styling end----
           div.innerHTML = ` <h1 style=" padding: 18px; margin: 20px; ">Mail:</h1>`
- 
-          
          outlinef.innerHTML=  `<li class="list-group-item"> <strong>from:</strong> ${mail.sender} </li><br>
           <li class="list-group-item" > <strong>to:</strong> ${mail.recipients} </li><br>
           <li class="list-group-item" > <strong>Subject:</strong> ${mail.subject} </li><br>
@@ -153,9 +149,25 @@ function view_mail(id)
           <li class="list-group-item" > <strong>Timestamp:</strong> ${mail.timestamp}</li><hr><hr>`;
      
           div.appendChild(outlinef);   
-         
-        }); 
-   //on pop  
+
+        //------reply button--->>will get mail
+        const reply = document.createElement('button');
+        reply.innerHTML = `reply`;
+        reply.className = 'btn btn-success';
+        reply.style.padding = '8px';
+        div.appendChild(reply);
+        reply.addEventListener('click' , ()=>{
+          //
+          reply_mail(mail);
+          
+        })//reply.addevent 
+
+        }); //-----still inside fetch
+   //on pop 
+   window.onpopstate = function(event) {
+    load_mailbox('inbox'); 
+}
+   
 
    // marking email as read when opened
    fetch(`/emails/${id}`, {
@@ -164,11 +176,8 @@ function view_mail(id)
         read: true
     })
   })
-
   console.log("from ->marking email as read when opened");
-
  }
-
 
 function compose_submit() {
 // Clear existing emails from the view
@@ -187,7 +196,9 @@ document.querySelector('#emails-view').innerHTML = '';
         body: JSON.stringify({
             recipients: to,
             subject: subject,
-            body: body
+            body: body,
+            read: false,
+            archived: true
             //conole.log(body)
         })
     })
@@ -198,4 +209,24 @@ document.querySelector('#emails-view').innerHTML = '';
       document.querySelector('#compose-body').value = ''; 
         });
     // load_mailbox('sent');
+}
+
+function reply_mail(mail)
+{ compose_email();
+  document.querySelector('#individual').style.display = 'none';
+  console.log(mail)
+  console.log("inside reply_mail func")
+  document.querySelector('#compose-recipients').value = mail["sender"]
+  //this means if subject(by api)'s 3 chars is ... then just print mail.sub.. if not then ...
+  if (mail.subject.startsWith("Re: "))
+  {
+    document.querySelector('#compose-body').value = "On " + mail.timestamp + " " + mail["sender"] + " wrote";
+  } else
+  {
+    document.querySelector('#compose-body').value = "Re: " + mail["subject"];
+  }
+    document.querySelector('#compose-body').value = "On " + mail.timestamp + mail["sender"] + " wrote: " + mail["subject"];
+    console.log("executed if else statement")
+    console.log("Re: " + mail["subject"])
+    console.log("On " + mail.timestamp + " " + mail["sender"] + " wrote")
 }
