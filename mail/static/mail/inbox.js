@@ -88,12 +88,15 @@ if (mail.read === false)
             //if this is the archived mail then show on website 
             if (mail.archived === true)
             {// Set the content of the list item (e.g., sender, subject, timestamp)
+
+// very intresting because we are not here as my archived inbox is not showing this timestampppp
+
               item.innerHTML = `
               <div class="list-group-item"> <strong>from:</strong> ${mail.sender}<br> </div>
               <div class="list-group-item" > <strong>to:</strong> ${mail.recipients}<br> </div>
               <div class="list-group-item" > <strong>Subject:</strong> ${mail.subject}<br> </div>
               <div class="list-group-item" > <strong>Body:</strong> ${mail.body}<br> </div>
-              <div class="list-group-item" > <strong>Timestamp:</strong> ${mail.timestamp}<hr><hr> </div>
+              <div class="list-group-item" > <strong>Timestampppp:</strong> ${mail.timestamp}<hr><hr> </div>
               `;
               //adding the unarchive button 
               var foo = document.createElement('button') 
@@ -104,7 +107,7 @@ if (mail.read === false)
                               //defining function for making  
                 foo.addEventListener('click', function (event) {
                   event.stopPropagation(); // Prevent the click event from propagating to the parent outline element
-                  console.log("Yay for unarchive button");//test done works
+                  console.log(" from unarchive button");//test done works
                   //putting to the api
                   fetch(`/emails/${mail.id}`, {
                     method: 'PUT',
@@ -113,21 +116,9 @@ if (mail.read === false)
                         })
                       })
                   });
-              if (mail.archived === true)
-              {
 
-              }
-              // i can remove this as i changed the logic
-              else
-              {
-                //mail.archived === true
-                foo.setAttribute('data-foo', 'unarchived');
-              }
             }
-            else
-            {
-              //no code will be executed here
-            }
+        
         }
         else
         {
