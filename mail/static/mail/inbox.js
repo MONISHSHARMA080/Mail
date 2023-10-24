@@ -56,8 +56,9 @@ function load_mailbox(mailbox) {
 
       mails.forEach(mail => {
         //if no mails
+        // i think this is wrong
         if (mail.length===0){
-          document.querySelector('#new').style.display = 'block';
+          // document.querySelector('#new').style.display = 'block';
         }
         else{
 // first lets set the new div to none just in case
